@@ -74,7 +74,7 @@ func parts(rotations []Rotation) (int, int) {
 		}
 
 		if dial == 0 {
-			if changed > 0 {
+			if changed > 0 && rotation.Clicks%100 == 0 {
 				changed -= 1
 			}
 
