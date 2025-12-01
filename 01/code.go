@@ -35,15 +35,34 @@ func readInput(file *os.File) []Rotation {
 	return rotations
 }
 
-func part1(rotations []Rotation) int {
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+
+	return x
+}
+
+func parts(rotations []Rotation) (int, int) {
 	var zeros int
+	var passedZeros int
 	dial := 50
 
 	for _, rotation := range rotations {
+		was := dial
 		if rotation.Direction == 'L' {
 			dial -= rotation.Clicks
 		} else {
 			dial += rotation.Clicks
+		}
+
+		if dial > 100 {
+			passedZeros += dial / 100
+		} else if dial < 0 {
+			passedZeros += abs(dial) / 100
+			if was != 0 {
+				passedZeros++
+			}
 		}
 
 		dial %= 100
@@ -56,7 +75,7 @@ func part1(rotations []Rotation) int {
 		}
 	}
 
-	return zeros
+	return zeros, passedZeros
 }
 
 func main() {
@@ -71,5 +90,7 @@ func main() {
 	}
 
 	rotations := readInput(file)
-	fmt.Println("Part1:", part1(rotations))
+	zeros, passedZeros := parts(rotations)
+	fmt.Println("Part1:", zeros)
+	fmt.Println("Part2:", zeros+passedZeros)
 }
