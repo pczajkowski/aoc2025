@@ -63,7 +63,7 @@ func parts(rotations []Rotation) (int, int) {
 		}
 
 		if dial < 0 {
-			if rotation.Clicks != abs(dial) {
+			if left != abs(dial) {
 				passedZeros++
 			}
 		}
