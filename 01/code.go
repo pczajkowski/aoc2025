@@ -49,7 +49,6 @@ func parts(rotations []Rotation) (int, int) {
 	dial := 50
 
 	for _, rotation := range rotations {
-		was := dial
 		if rotation.Direction == 'L' {
 			dial -= rotation.Clicks
 		} else {
@@ -58,9 +57,14 @@ func parts(rotations []Rotation) (int, int) {
 
 		if dial > 100 {
 			passedZeros += dial / 100
-		} else if dial < 0 {
-			passedZeros += abs(dial) / 100
-			if was != 0 {
+		}
+
+		if dial < 0 {
+			if abs(dial) > 100 {
+				passedZeros += abs(dial) / 100
+			}
+
+			if rotation.Clicks != abs(dial%100) {
 				passedZeros++
 			}
 		}
