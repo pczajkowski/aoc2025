@@ -52,25 +52,21 @@ func parts(rotations []Rotation) (int, int) {
 		changed := rotation.Clicks / 100
 		move := rotation.Clicks % 100
 
-		if rotation.Direction == 'L' {
-			dial -= move
-		} else {
-			dial += move
-		}
-
-		if dial > 100 {
-			passedZeros++
-		}
-
-		if dial < 0 {
-			if move != abs(dial) {
-				passedZeros++
+		if move > 0 {
+			if rotation.Direction == 'L' {
+				dial -= move
+			} else {
+				dial += move
 			}
-		}
 
-		dial %= 100
-		if dial < 0 {
-			dial += 100
+			if dial > 100 || dial < 0 && move != abs(dial) {
+				changed++
+			}
+
+			dial %= 100
+			if dial < 0 {
+				dial += 100
+			}
 		}
 
 		if dial == 0 {
