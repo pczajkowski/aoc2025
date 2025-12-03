@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 )
 
-func readInput(file *os.File) [][]int {
+func readInput(file *os.File) [][]byte {
 	scanner := bufio.NewScanner(file)
-	var batteries [][]int
+	var batteries [][]byte
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -17,9 +18,9 @@ func readInput(file *os.File) [][]int {
 			break
 		}
 
-		batteriesRow := make([]int, len(line))
-		for i, char := range line {
-			batteriesRow[i] = int(char - '0')
+		batteriesRow := make([]byte, len(line))
+		for i := range line {
+			batteriesRow[i] = line[i]
 		}
 
 		batteries = append(batteries, batteriesRow)
@@ -28,7 +29,7 @@ func readInput(file *os.File) [][]int {
 	return batteries
 }
 
-func findMaxIndex(slice []int, start, end int) int {
+func findMaxIndex(slice []byte, start, end int) int {
 	maxIndex := start
 	for i := start; i < end; i++ {
 		if slice[i] > slice[maxIndex] {
@@ -39,14 +40,19 @@ func findMaxIndex(slice []int, start, end int) int {
 	return maxIndex
 }
 
-func part1(batteries [][]int) int {
+func part1(batteries [][]byte) int {
 	var sum int
 
 	for row := range batteries {
 		maxLeft := findMaxIndex(batteries[row], 0, len(batteries[row])-1)
 		maxRight := findMaxIndex(batteries[row], maxLeft+1, len(batteries[row]))
 
-		sum += batteries[row][maxLeft]*10 + batteries[row][maxRight]
+		num, err := strconv.Atoi(string(batteries[row][maxLeft]) + string(batteries[row][maxRight]))
+		if err != nil {
+			log.Fatalf("Failed to convert %s to int!\n", string(batteries[row][maxLeft])+string(batteries[row][maxRight]))
+		}
+
+		sum += num
 	}
 
 	return sum
