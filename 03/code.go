@@ -28,6 +28,36 @@ func readInput(file *os.File) [][]int {
 	return batteries
 }
 
+func part1(batteries [][]int) int {
+	var sum int
+
+	for row := range batteries {
+		var maxLeft int
+		for col := 0; col < len(batteries[row])-1; col++ {
+			if batteries[row][col] > batteries[row][maxLeft] {
+				maxLeft = col
+				if batteries[row][maxLeft] == 9 {
+					break
+				}
+			}
+		}
+
+		maxRight := maxLeft + 1
+		for col := maxRight; col < len(batteries[row]); col++ {
+			if batteries[row][col] > batteries[row][maxRight] {
+				maxRight = col
+				if batteries[row][maxRight] == 9 {
+					break
+				}
+			}
+		}
+
+		sum += batteries[row][maxLeft]*10 + batteries[row][maxRight]
+	}
+
+	return sum
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("You need to specify a file!")
@@ -40,5 +70,5 @@ func main() {
 	}
 
 	batteries := readInput(file)
-	fmt.Println(batteries)
+	fmt.Println("Part1:", part1(batteries))
 }
