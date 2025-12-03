@@ -58,6 +58,30 @@ func part1(batteries [][]byte) int {
 	return sum
 }
 
+func part2(batteries [][]byte) int {
+	var sum int
+
+	for row := range batteries {
+		digits := make([]byte, 12)
+		var index int
+
+		for i := 12; i > 0; i-- {
+			index = findMaxIndex(batteries[row], index, len(batteries[row])-i+1)
+			digits[12-i] = batteries[row][index]
+			index++
+		}
+
+		num, err := strconv.Atoi(string(digits))
+		if err != nil {
+			log.Fatalf("Failed to convert %s to int!\n", string(digits))
+		}
+
+		sum += num
+	}
+
+	return sum
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("You need to specify a file!")
@@ -71,4 +95,5 @@ func main() {
 
 	batteries := readInput(file)
 	fmt.Println("Part1:", part1(batteries))
+	fmt.Println("Part2:", part2(batteries))
 }
