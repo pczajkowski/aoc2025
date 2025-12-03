@@ -49,29 +49,16 @@ func getANumber(text string) int {
 	return num
 }
 
-func part1(batteries [][]byte) int {
+func maxPower(batteries [][]byte, maxOn int) int {
 	var sum int
 
 	for row := range batteries {
-		maxLeft := findMaxIndex(batteries[row], 0, len(batteries[row])-1)
-		maxRight := findMaxIndex(batteries[row], maxLeft+1, len(batteries[row]))
-
-		sum += getANumber(string(batteries[row][maxLeft]) + string(batteries[row][maxRight]))
-	}
-
-	return sum
-}
-
-func part2(batteries [][]byte) int {
-	var sum int
-
-	for row := range batteries {
-		digits := make([]byte, 12)
+		digits := make([]byte, maxOn)
 		var index int
 
-		for i := 12; i > 0; i-- {
+		for i := maxOn; i > 0; i-- {
 			index = findMaxIndex(batteries[row], index, len(batteries[row])-i+1)
-			digits[12-i] = batteries[row][index]
+			digits[maxOn-i] = batteries[row][index]
 			index++
 		}
 
@@ -93,6 +80,6 @@ func main() {
 	}
 
 	batteries := readInput(file)
-	fmt.Println("Part1:", part1(batteries))
-	fmt.Println("Part2:", part2(batteries))
+	fmt.Println("Part1:", maxPower(batteries, 2))
+	fmt.Println("Part2:", maxPower(batteries, 12))
 }
