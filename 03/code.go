@@ -40,6 +40,15 @@ func findMaxIndex(slice []byte, start, end int) int {
 	return maxIndex
 }
 
+func getANumber(text string) int {
+	num, err := strconv.Atoi(text)
+	if err != nil {
+		log.Fatalf("Failed to convert %s to int!\n", text)
+	}
+
+	return num
+}
+
 func part1(batteries [][]byte) int {
 	var sum int
 
@@ -47,12 +56,7 @@ func part1(batteries [][]byte) int {
 		maxLeft := findMaxIndex(batteries[row], 0, len(batteries[row])-1)
 		maxRight := findMaxIndex(batteries[row], maxLeft+1, len(batteries[row]))
 
-		num, err := strconv.Atoi(string(batteries[row][maxLeft]) + string(batteries[row][maxRight]))
-		if err != nil {
-			log.Fatalf("Failed to convert %s to int!\n", string(batteries[row][maxLeft])+string(batteries[row][maxRight]))
-		}
-
-		sum += num
+		sum += getANumber(string(batteries[row][maxLeft]) + string(batteries[row][maxRight]))
 	}
 
 	return sum
@@ -71,12 +75,7 @@ func part2(batteries [][]byte) int {
 			index++
 		}
 
-		num, err := strconv.Atoi(string(digits))
-		if err != nil {
-			log.Fatalf("Failed to convert %s to int!\n", string(digits))
-		}
-
-		sum += num
+		sum += getANumber(string(digits))
 	}
 
 	return sum
