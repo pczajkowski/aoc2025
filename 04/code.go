@@ -7,9 +7,9 @@ import (
 	"os"
 )
 
-func readInput(file *os.File) []string {
+func readInput(file *os.File) [][]byte {
 	scanner := bufio.NewScanner(file)
-	var lines []string
+	var lines [][]byte
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -17,7 +17,12 @@ func readInput(file *os.File) []string {
 			break
 		}
 
-		lines = append(lines, line)
+		items := make([]byte, len(line))
+		for i := range line {
+			items[i] = line[i]
+		}
+
+		lines = append(lines, items)
 	}
 
 	return lines
@@ -28,7 +33,7 @@ type point struct {
 	y int
 }
 
-func howManyNeighbors(lines []string, x, y int) int {
+func howManyNeighbors(lines [][]byte, x, y int) int {
 	var count int
 
 	for row := y - 1; row <= y+1; row++ {
@@ -54,8 +59,9 @@ func howManyNeighbors(lines []string, x, y int) int {
 	return count
 }
 
-func part1(lines []string) int {
+func removeRolls(lines [][]byte) int {
 	var count int
+	var toRemove []point
 
 	for y := range lines {
 		for x := range lines[y] {
@@ -65,9 +71,14 @@ func part1(lines []string) int {
 
 			neighbors := howManyNeighbors(lines, x, y)
 			if neighbors < 4 {
+				toRemove = append(toRemove, point{x: x, y: y})
 				count++
 			}
 		}
+	}
+
+	for _, p := range toRemove {
+		lines[p.y][p.x] = '.'
 	}
 
 	return count
@@ -85,5 +96,18 @@ func main() {
 	}
 
 	lines := readInput(file)
-	fmt.Println("Part1:", part1(lines))
+	part1 := removeRolls(lines)
+	fmt.Println("Part1:", part1)
+
+	part2 := part1
+	for {
+		removed := removeRolls(lines)
+		if removed == 0 {
+			break
+		}
+
+		part2 += removed
+	}
+
+	fmt.Println("Part2:", part2)
 }
