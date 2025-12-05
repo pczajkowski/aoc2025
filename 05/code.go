@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 )
 
 func readInput(file *os.File) ([][]int, []int) {
@@ -42,6 +43,24 @@ func readInput(file *os.File) ([][]int, []int) {
 	return ranges, ingredients
 }
 
+func part1(ranges [][]int, ingredients []int) int {
+	var count int
+	for _, ingredient := range ingredients {
+		for _, r := range ranges {
+			if ingredient < r[0] {
+				break
+			}
+
+			if ingredient <= r[1] {
+				count++
+				break
+			}
+		}
+	}
+
+	return count
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("You need to specify a file!")
@@ -54,5 +73,17 @@ func main() {
 	}
 
 	ranges, ingredients := readInput(file)
-	fmt.Println(ranges, ingredients)
+	sort.Slice(ranges, func(i, j int) bool {
+		if ranges[i][0] < ranges[j][0] {
+			return true
+		}
+
+		if ranges[i][0] == ranges[j][0] {
+			return ranges[i][1] < ranges[j][1]
+		}
+
+		return false
+	})
+
+	fmt.Println("Part1:", part1(ranges, ingredients))
 }
