@@ -61,6 +61,24 @@ func part1(ranges [][]int, ingredients []int) int {
 	return count
 }
 
+func part2(ranges [][]int) int {
+	count := ranges[0][1] - ranges[0][0] + 1
+
+	for i := 1; i < len(ranges); i++ {
+		if ranges[i][1] <= ranges[i-1][1] {
+			continue
+		}
+
+		if ranges[i][0] <= ranges[i-1][1] {
+			count += ranges[i][1] - ranges[i-1][1]
+		} else {
+			count += ranges[i][1] - ranges[i][0] + 1
+		}
+	}
+
+	return count
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("You need to specify a file!")
@@ -86,4 +104,5 @@ func main() {
 	})
 
 	fmt.Println("Part1:", part1(ranges, ingredients))
+	fmt.Println("Part2:", part2(ranges))
 }
