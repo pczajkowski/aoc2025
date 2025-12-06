@@ -98,6 +98,8 @@ func part2(numbers [][]string, symbols []string) int {
 	var sum int
 
 	for i, symbol := range symbols {
+		var result int
+
 		for j := len(symbol) - 1; j >= 0; j-- {
 			var digits []byte
 			for row := range numbers {
@@ -111,8 +113,26 @@ func part2(numbers [][]string, symbols []string) int {
 			}
 
 			numberString := string(digits)
-			fmt.Println(numberString)
+			if numberString == "" {
+				continue
+			}
+
+			number, err := strconv.Atoi(numberString)
+			if err != nil {
+				log.Fatalf("Failed to convert %s to int!\n", numberString)
+			}
+
+			if symbol[0] == '+' {
+				result += number
+			} else if symbol[0] == '*' {
+				if result == 0 {
+					result = 1
+				}
+				result *= number
+			}
 		}
+
+		sum += result
 	}
 
 	return sum
@@ -132,5 +152,5 @@ func main() {
 	numberLines, symbols := readInput(file)
 	numbers := parseNumbers(numberLines, symbols)
 	fmt.Println("Part1:", part1(numbers, symbols))
-	part2(numbers, symbols)
+	fmt.Println("Part2:", part2(numbers, symbols))
 }
