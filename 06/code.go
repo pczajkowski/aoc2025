@@ -9,9 +9,9 @@ import (
 	"strings"
 )
 
-func readInput(file *os.File) ([][]string, []string) {
+func readInput(file *os.File) ([]string, []string) {
 	scanner := bufio.NewScanner(file)
-	var numbers [][]string
+	var numberLines []string
 	var symbols []string
 
 	for scanner.Scan() {
@@ -21,35 +21,46 @@ func readInput(file *os.File) ([][]string, []string) {
 		}
 
 		if line[0] == '+' || line[0] == '*' {
-			parts := strings.Split(line, " ")
-			for _, part := range parts {
-				if part == "" || part == " " {
-					continue
-				}
-
-				symbols = append(symbols, strings.Trim(part, " "))
-			}
-		} else {
-			var lineNumbers []string
-			var number string
+			var symbol []byte
 			for i := range line {
-				if line[i] == ' ' {
-					if i > 0 && line[i-1] >= '0' && line[i-1] <= '9' {
-						lineNumbers = append(lineNumbers, number)
-						number = ""
-						continue
-					}
+				if i > 0 && line[i] == '+' || line[i] == '*' {
+					symbols = append(symbols, string(symbol))
+					symbol = []byte{}
 				}
 
+				symbol = append(symbol, line[i])
+			}
+
+			symbols = append(symbols, string(symbol))
+		} else {
+			numberLines = append(numberLines, line)
+		}
+	}
+
+	return numberLines, symbols
+}
+
+func parseNumbers(numberLines, symbols []string) [][]string {
+	var numbers [][]string
+
+	for _, line := range numberLines {
+		var start, end int
+		var lineNumbers []string
+		for _, symbol := range symbols {
+			end += len(symbol)
+			var number string
+			for i := start; i < end; i++ {
 				number += string(line[i])
 			}
 
 			lineNumbers = append(lineNumbers, number)
-			numbers = append(numbers, lineNumbers)
+			start = end
 		}
+
+		numbers = append(numbers, lineNumbers)
 	}
 
-	return numbers, symbols
+	return numbers
 }
 
 func part1(numbers [][]string, symbols []string) int {
@@ -58,14 +69,18 @@ func part1(numbers [][]string, symbols []string) int {
 	for i, symbol := range symbols {
 		var result int
 		for row := range numbers {
-			number, err := strconv.Atoi(strings.Trim(numbers[row][i], " "))
-			if err != nil {
-				log.Fatalf("Failed to convert %s to int!\n", numbers[row][i])
+			if numbers[row][i] == "" {
+				continue
 			}
 
-			if symbol == "+" {
+			number, err := strconv.Atoi(strings.Trim(numbers[row][i], " "))
+			if err != nil {
+				log.Fatalf("Failed to convert %s to int (row: %d, col: %d)!\n", numbers[row][i], row, i)
+			}
+
+			if symbol[0] == '+' {
 				result += number
-			} else if symbol == "*" {
+			} else if symbol[0] == '*' {
 				if result == 0 {
 					result = 1
 				}
@@ -90,6 +105,7 @@ func main() {
 		log.Fatalf("Failed to open %s!\n", filePath)
 	}
 
-	numbers, symbols := readInput(file)
+	numberLines, symbols := readInput(file)
+	numbers := parseNumbers(numberLines, symbols)
 	fmt.Println("Part1:", part1(numbers, symbols))
 }
