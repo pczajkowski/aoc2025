@@ -94,6 +94,30 @@ func part1(numbers [][]string, symbols []string) int {
 	return sum
 }
 
+func part2(numbers [][]string, symbols []string) int {
+	var sum int
+
+	for i, symbol := range symbols {
+		for j := len(symbol) - 1; j >= 0; j-- {
+			var digits []byte
+			for row := range numbers {
+				if numbers[row][i] == "" {
+					continue
+				}
+
+				if numbers[row][i][j] >= '0' && numbers[row][i][j] <= '9' {
+					digits = append(digits, numbers[row][i][j])
+				}
+			}
+
+			numberString := string(digits)
+			fmt.Println(numberString)
+		}
+	}
+
+	return sum
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("You need to specify a file!")
@@ -108,4 +132,5 @@ func main() {
 	numberLines, symbols := readInput(file)
 	numbers := parseNumbers(numberLines, symbols)
 	fmt.Println("Part1:", part1(numbers, symbols))
+	part2(numbers, symbols)
 }
