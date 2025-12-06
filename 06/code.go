@@ -52,6 +52,28 @@ func readInput(file *os.File) ([][]int, []string) {
 	return numbers, symbols
 }
 
+func part1(numbers [][]int, symbols []string) int {
+	var sum int
+
+	for i, symbol := range symbols {
+		var result int
+		for row := range numbers {
+			if symbol == "+" {
+				result += numbers[row][i]
+			} else if symbol == "*" {
+				if result == 0 {
+					result = 1
+				}
+				result *= numbers[row][i]
+			}
+		}
+
+		sum += result
+	}
+
+	return sum
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("You need to specify a file!")
@@ -64,5 +86,5 @@ func main() {
 	}
 
 	numbers, symbols := readInput(file)
-	fmt.Println(numbers, symbols)
+	fmt.Println("Part1:", part1(numbers, symbols))
 }
