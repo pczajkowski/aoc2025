@@ -51,6 +51,8 @@ func part1(maze []string, beams []int) int {
 					beams[i+1]++
 				}
 
+				beams[i] = 0
+
 				count++
 			}
 		}
