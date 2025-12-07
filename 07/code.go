@@ -7,9 +7,10 @@ import (
 	"os"
 )
 
-func readInput(file *os.File) []string {
+func readInput(file *os.File) ([]string, int) {
 	scanner := bufio.NewScanner(file)
 	var maze []string
+	start := -1
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -17,10 +18,19 @@ func readInput(file *os.File) []string {
 			continue
 		}
 
+		if start < 0 {
+			for i := range line {
+				if line[i] == 'S' {
+					start = i
+					break
+				}
+			}
+		}
+
 		maze = append(maze, line)
 	}
 
-	return maze
+	return maze, start
 }
 
 func main() {
@@ -34,6 +44,6 @@ func main() {
 		log.Fatalf("Failed to open %s!\n", filePath)
 	}
 
-	maze := readInput(file)
-	fmt.Println(maze)
+	maze, start := readInput(file)
+	fmt.Println(maze, start)
 }
