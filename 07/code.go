@@ -61,6 +61,30 @@ func part1(maze []string, beams []int) int {
 	return count
 }
 
+func part2(maze []string, x, y int) int {
+	if y >= len(maze) {
+		return 1
+	}
+
+	var count int
+	var left, right int
+	if maze[y][x] == '.' {
+		count += part2(maze, x, y+1)
+	} else if maze[y][x] == '^' {
+		if x > 0 {
+			left += part2(maze, x-1, y+1)
+		}
+
+		if x < len(maze[0])-1 {
+			right += part2(maze, x+1, y+1)
+		}
+
+		count += left + right
+	}
+
+	return count
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("You need to specify a file!")
@@ -76,4 +100,5 @@ func main() {
 	beams := make([]int, len(maze[0]))
 	beams[start] = 1
 	fmt.Println("Part1:", part1(maze, beams))
+	fmt.Println("Part2:", part2(maze, start, 1))
 }
