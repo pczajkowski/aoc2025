@@ -61,33 +61,25 @@ func part1(maze []string, beams []int) int {
 	return count
 }
 
-func part2(maze []string, beams []bool) int {
-	var count int
-
+func part2(maze []string, beams []int) int {
 	for row := 2; row < len(maze); row += 2 {
 		for i := range beams {
-			if !beams[i] {
+			if beams[i] == 0 {
 				continue
 			}
 
 			if maze[row][i] == '^' {
-				if i > 0 {
-					beams[i-1] = true
-				}
+				beams[i-1] += beams[i]
+				beams[i+1] += beams[i]
 
-				if i < len(beams)-1 {
-					beams[i+1] = true
-				}
-
-				beams[i] = false
+				beams[i] = 0
 			}
 		}
+	}
 
-		for i := range beams {
-			if beams[i] {
-				count++
-			}
-		}
+	var count int
+	for _, b := range beams {
+		count += b
 	}
 
 	return count
@@ -109,7 +101,7 @@ func main() {
 	beams[start] = 1
 	fmt.Println("Part1:", part1(maze, beams))
 
-	beams2 := make([]bool, len(maze[0]))
-	beams2[start] = true
+	beams2 := make([]int, len(maze[0]))
+	beams2[start] = 1
 	fmt.Println("Part2:", part2(maze, beams2))
 }
