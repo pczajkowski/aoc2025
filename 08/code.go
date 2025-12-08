@@ -75,6 +75,19 @@ func part1(boxes []box) int {
 		}
 	}
 
+	circuits := make([][]box, circuit)
+	for i := range circuits {
+		circuits[i] = []box{}
+	}
+
+	for _, box := range boxes {
+		circuits[box.circuit] = append(circuits[box.circuit], box)
+	}
+
+	for _, circuit := range circuits {
+		fmt.Println(circuit, len(circuit))
+	}
+
 	return result
 }
 
@@ -91,5 +104,4 @@ func main() {
 
 	boxes := readInput(file)
 	part1(boxes)
-	fmt.Println(boxes)
 }
