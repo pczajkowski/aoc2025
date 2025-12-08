@@ -6,6 +6,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"sort"
 )
 
 type box struct {
@@ -66,7 +67,57 @@ func part1(boxes []box) int {
 		}
 
 	}
-	fmt.Println(distances)
+
+	sort.Slice(distances, func(i, j int) bool { return distances[i].value < distances[j].value })
+
+	var circuits [][]int
+	for i := range distances {
+		first := boxes[distances[i].first]
+		second := boxes[distances[i].second]
+		if first.inCircuit && second.inCircuit {
+			continue
+		}
+
+		if !first.inCircuit && !second.inCircuit {
+			circuits = append(circuits, []int{first.id, second.id})
+			boxes[distances[i].first].inCircuit = true
+			boxes[distances[i].second].inCircuit = true
+		} else if !first.inCircuit {
+			var found bool
+			for j := range circuits {
+				for k := range circuits[j] {
+					if circuits[j][k] == second.id {
+						found = true
+						circuits[j] = append(circuits[j], first.id)
+						break
+					}
+				}
+			}
+
+			boxes[distances[i].first].inCircuit = true
+			if !found {
+				circuits = append(circuits, []int{first.id})
+			}
+		} else if !second.inCircuit {
+			var found bool
+			for j := range circuits {
+				for k := range circuits[j] {
+					if circuits[j][k] == first.id {
+						found = true
+						circuits[j] = append(circuits[j], second.id)
+						break
+					}
+				}
+			}
+
+			boxes[distances[i].second].inCircuit = true
+			if !found {
+				circuits = append(circuits, []int{second.id})
+			}
+		}
+
+	}
+	fmt.Println(circuits)
 
 	return result
 }
