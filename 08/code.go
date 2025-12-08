@@ -4,12 +4,21 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math"
 	"os"
+	"sort"
 )
 
 type box struct {
 	x, y, z int
 	id      int
+}
+
+func (p box) DistanceTo(other box) float64 {
+	dx := other.x - p.x
+	dy := other.y - p.y
+	dz := other.z - p.z
+	return math.Sqrt(float64(dx*dx + dy*dy + dz*dz))
 }
 
 func readInput(file *os.File) []box {
@@ -47,6 +56,14 @@ func main() {
 		log.Fatalf("Failed to open %s!\n", filePath)
 	}
 
+	markerBox := box{x: 0, y: 0, z: 0}
 	boxes := readInput(file)
-	fmt.Println(boxes)
+	fmt.Println(boxes[0], boxes[len(boxes)-1], boxes[0].DistanceTo(boxes[len(boxes)-1]))
+	sort.Slice(boxes, func(i, j int) bool {
+		return markerBox.DistanceTo(boxes[i]) < markerBox.DistanceTo(boxes[j])
+	})
+
+	for i := 1; i < len(boxes); i++ {
+		fmt.Println(boxes[i], boxes[i-1], boxes[i].DistanceTo(boxes[i-1]))
+	}
 }
