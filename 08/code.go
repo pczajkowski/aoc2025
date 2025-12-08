@@ -6,12 +6,11 @@ import (
 	"log"
 	"math"
 	"os"
-	"sort"
 )
 
 type box struct {
-	x, y, z int
-	id      int
+	x, y, z     int
+	id, circuit int
 }
 
 func (p box) DistanceTo(other box) float64 {
@@ -45,6 +44,40 @@ func readInput(file *os.File) []box {
 	return boxes
 }
 
+func part1(boxes []box) int {
+	var result int
+
+	circuit := 1
+
+	for i := range boxes {
+		bestDistance := math.MaxFloat64
+		best := -1
+		for j := range boxes {
+			if j == i {
+				continue
+			}
+
+			distance := boxes[j].DistanceTo(boxes[i])
+			if distance < bestDistance {
+				bestDistance = distance
+				best = j
+			}
+		}
+
+		if boxes[i].circuit > 0 {
+			boxes[best].circuit = boxes[i].circuit
+		} else if boxes[best].circuit > 0 {
+			boxes[i].circuit = boxes[best].circuit
+		} else {
+			boxes[i].circuit = circuit
+			boxes[best].circuit = circuit
+			circuit++
+		}
+	}
+
+	return result
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("You need to specify a file!")
@@ -56,14 +89,7 @@ func main() {
 		log.Fatalf("Failed to open %s!\n", filePath)
 	}
 
-	markerBox := box{x: 0, y: 0, z: 0}
 	boxes := readInput(file)
-	fmt.Println(boxes[0], boxes[len(boxes)-1], boxes[0].DistanceTo(boxes[len(boxes)-1]))
-	sort.Slice(boxes, func(i, j int) bool {
-		return markerBox.DistanceTo(boxes[i]) < markerBox.DistanceTo(boxes[j])
-	})
-
-	for i := 1; i < len(boxes); i++ {
-		fmt.Println(boxes[i], boxes[i-1], boxes[i].DistanceTo(boxes[i-1]))
-	}
+	part1(boxes)
+	fmt.Println(boxes)
 }
