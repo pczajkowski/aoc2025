@@ -50,55 +50,23 @@ type circuit struct {
 	boxes         []box
 }
 
+type distance struct {
+	first, second int
+	value         float64
+}
+
 func part1(boxes []box) int {
 	var result int
+	var distances []distance
 
 	for i := range boxes {
-		bestDistance := math.MaxFloat64
-		best := -1
-		for j := range boxes {
-			if j == i {
-				continue
-			}
-
-			distance := boxes[j].DistanceTo(boxes[i])
-			if distance < bestDistance {
-				bestDistance = distance
-				best = j
-			}
+		for j := i + 1; j < len(boxes); j++ {
+			howFar := boxes[j].DistanceTo(boxes[i])
+			distances = append(distances, distance{first: boxes[i].id, second: boxes[j].id, value: howFar})
 		}
 
-		boxes[i].best = boxes[best].id
 	}
-
-	var circuits []circuit
-	for i := range boxes {
-		if boxes[i].inCircuit {
-			continue
-		}
-
-		if boxes[boxes[i].best].best == boxes[i].id {
-			boxes[i].inCircuit = true
-			boxes[boxes[i].best].inCircuit = true
-
-			set := circuit{first: boxes[i].id, second: boxes[i].best, boxes: []box{boxes[i], boxes[boxes[i].best]}}
-			circuits = append(circuits, set)
-		}
-	}
-
-	for _, item := range boxes {
-		if item.inCircuit {
-			continue
-		}
-
-		for i := range circuits {
-			if item.best == circuits[i].first || item.best == circuits[i].second {
-				circuits[i].boxes = append(circuits[i].boxes, item)
-				break
-			}
-		}
-	}
-	fmt.Println(circuits)
+	fmt.Println(distances)
 
 	return result
 }
