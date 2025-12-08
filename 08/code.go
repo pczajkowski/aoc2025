@@ -9,8 +9,9 @@ import (
 )
 
 type box struct {
-	x, y, z     int
-	id, circuit int
+	x, y, z   int
+	id, best  int
+	inCircuit bool
 }
 
 func (p box) DistanceTo(other box) float64 {
@@ -44,10 +45,13 @@ func readInput(file *os.File) []box {
 	return boxes
 }
 
+type circuit struct {
+	first, second int
+	boxes         []box
+}
+
 func part1(boxes []box) int {
 	var result int
-
-	circuit := 1
 
 	for i := range boxes {
 		bestDistance := math.MaxFloat64
@@ -64,29 +68,24 @@ func part1(boxes []box) int {
 			}
 		}
 
-		if boxes[i].circuit > 0 {
-			boxes[best].circuit = boxes[i].circuit
-		} else if boxes[best].circuit > 0 {
-			boxes[i].circuit = boxes[best].circuit
-		} else {
-			boxes[i].circuit = circuit
-			boxes[best].circuit = circuit
-			circuit++
+		boxes[i].best = boxes[best].id
+	}
+
+	var circuits []circuit
+	for _, item := range boxes {
+		if item.inCircuit {
+			continue
+		}
+
+		if boxes[item.best].best == item.id {
+			item.inCircuit = true
+			boxes[item.best].inCircuit = true
+
+			set := circuit{first: item.id, second: item.best, boxes: []box{item, boxes[item.best]}}
+			circuits = append(circuits, set)
 		}
 	}
-
-	circuits := make([][]box, circuit)
-	for i := range circuits {
-		circuits[i] = []box{}
-	}
-
-	for _, box := range boxes {
-		circuits[box.circuit] = append(circuits[box.circuit], box)
-	}
-
-	for _, circuit := range circuits {
-		fmt.Println(circuit, len(circuit))
-	}
+	fmt.Println(circuits)
 
 	return result
 }
