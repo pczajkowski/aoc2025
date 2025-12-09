@@ -7,13 +7,13 @@ import (
 	"os"
 )
 
-type tile struct {
-	x, y int
+type Point struct {
+	X, Y int
 }
 
-func readInput(file *os.File) []tile {
+func readInput(file *os.File) []Point {
 	scanner := bufio.NewScanner(file)
-	var tiles []tile
+	var tiles []Point
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -27,7 +27,7 @@ func readInput(file *os.File) []tile {
 			log.Fatalf("Bad input: %s", line)
 		}
 
-		tiles = append(tiles, tile{x: x, y: y})
+		tiles = append(tiles, Point{X: x, Y: y})
 	}
 
 	return tiles
@@ -41,13 +41,13 @@ func abs(a int) int {
 	return a
 }
 
-func part1(tiles []tile) int {
+func part1(tiles []Point) int {
 	end := len(tiles)
 	var maxArea int
 
 	for i := range tiles {
 		for j := i + 1; j < end; j++ {
-			area := (abs(tiles[j].x-tiles[i].x) + 1) * (abs(tiles[j].y-tiles[i].y) + 1)
+			area := (abs(tiles[j].X-tiles[i].X) + 1) * (abs(tiles[j].Y-tiles[i].Y) + 1)
 			if area > maxArea {
 				maxArea = area
 			}
