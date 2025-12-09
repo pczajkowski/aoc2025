@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sort"
 )
 
 type tile struct {
@@ -43,8 +42,19 @@ func abs(a int) int {
 }
 
 func part1(tiles []tile) int {
-	last := len(tiles) - 1
-	return abs(tiles[last].x-tiles[0].x+1) * abs(tiles[last].y-tiles[0].y+1)
+	end := len(tiles)
+	var maxArea int
+
+	for i := range tiles {
+		for j := i + 1; j < end; j++ {
+			area := (abs(tiles[j].x-tiles[i].x) + 1) * (abs(tiles[j].y-tiles[i].y) + 1)
+			if area > maxArea {
+				maxArea = area
+			}
+		}
+	}
+
+	return maxArea
 }
 
 func main() {
@@ -59,13 +69,5 @@ func main() {
 	}
 
 	tiles := readInput(file)
-	sort.Slice(tiles, func(i, j int) bool {
-		if tiles[i].x == tiles[j].x {
-			return tiles[i].y < tiles[j].y
-		}
-
-		return tiles[i].x < tiles[j].x
-	})
-
 	fmt.Println("Part1:", part1(tiles))
 }
