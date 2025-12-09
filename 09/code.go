@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 )
 
 type tile struct {
@@ -33,6 +34,19 @@ func readInput(file *os.File) []tile {
 	return tiles
 }
 
+func abs(a int) int {
+	if a < 0 {
+		return -a
+	}
+
+	return a
+}
+
+func part1(tiles []tile) int {
+	last := len(tiles) - 1
+	return abs(tiles[last].x-tiles[0].x+1) * abs(tiles[last].y-tiles[0].y+1)
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("You need to specify a file!")
@@ -45,5 +59,13 @@ func main() {
 	}
 
 	tiles := readInput(file)
-	fmt.Println(tiles)
+	sort.Slice(tiles, func(i, j int) bool {
+		if tiles[i].x == tiles[j].x {
+			return tiles[i].y < tiles[j].y
+		}
+
+		return tiles[i].x < tiles[j].x
+	})
+
+	fmt.Println("Part1:", part1(tiles))
 }
