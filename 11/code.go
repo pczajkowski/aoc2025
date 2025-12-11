@@ -44,28 +44,51 @@ func part1(entry string, devices map[string][]string) int {
 	return count
 }
 
-func part2(entry string, devices map[string][]string, dac, fft bool) int {
-	if entry == "out" {
-		if dac && fft {
-			return 1
+func passedDACandFFT(path []string) bool {
+	var dac, fft bool
+	for i := range path {
+		if path[i] == "dac" {
+			dac = true
 		}
 
-		return 0
+		if path[i] == "fft" {
+			fft = true
+		}
 	}
 
-	if entry == "dac" {
-		dac = true
-	}
+	return dac && fft
+}
 
-	if entry == "fft" {
-		fft = true
-	}
-
+func part2(entry string, devices map[string][]string) int {
 	var count int
-	for _, device := range devices[entry] {
-		count += part2(device, devices, dac, fft)
+	visited := make(map[string]bool)
+	path := []string{}
+
+	var dfs func(current string)
+	dfs = func(current string) {
+		path = append(path, current)
+		visited[current] = true
+		defer func() {
+			path = path[:len(path)-1]
+			visited[current] = false
+		}()
+
+		if current == "out" {
+			if passedDACandFFT(path) {
+				count++
+			}
+
+			return
+		} else {
+			for _, neighbor := range devices[current] {
+				if !visited[neighbor] {
+					dfs(neighbor)
+				}
+			}
+		}
 	}
 
+	dfs(entry)
 	return count
 }
 
@@ -82,5 +105,5 @@ func main() {
 
 	devices := readInput(file)
 	fmt.Println("Part1:", part1("you", devices))
-	fmt.Println("Part2:", part2("svr", devices, false, false))
+	fmt.Println("Part2:", part2("svr", devices))
 }
