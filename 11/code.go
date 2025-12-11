@@ -44,31 +44,26 @@ func part1(entry string, devices map[string][]string) int {
 	return count
 }
 
-func findPaths(entry string, devices map[string][]string, visited map[string]bool) int {
+func part2(entry string, devices map[string][]string, dac, fft bool) int {
 	if entry == "out" {
-		if visited["dac"] && visited["fft"] {
+		if dac && fft {
 			return 1
 		}
 
 		return 0
 	}
 
-	visited[entry] = true
-	var count int
-	for _, device := range devices[entry] {
-		visited[device] = true
-		count += findPaths(device, devices, visited)
+	if entry == "dac" {
+		dac = true
 	}
 
-	return count
-}
+	if entry == "fft" {
+		fft = true
+	}
 
-func part2(entry string, devices map[string][]string) int {
 	var count int
 	for _, device := range devices[entry] {
-		visited := make(map[string]bool)
-		visited[device] = true
-		count += findPaths(device, devices, visited)
+		count += part2(device, devices, dac, fft)
 	}
 
 	return count
@@ -87,5 +82,5 @@ func main() {
 
 	devices := readInput(file)
 	fmt.Println("Part1:", part1("you", devices))
-	fmt.Println("Part2:", part2("svr", devices))
+	fmt.Println("Part2:", part2("svr", devices, false, false))
 }
