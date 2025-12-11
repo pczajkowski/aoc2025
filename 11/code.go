@@ -31,6 +31,19 @@ func readInput(file *os.File) map[string][]string {
 	return devices
 }
 
+func part1(entry string, devices map[string][]string) int {
+	if entry == "out" {
+		return 1
+	}
+
+	var count int
+	for _, device := range devices[entry] {
+		count += part1(device, devices)
+	}
+
+	return count
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("You need to specify a file!")
@@ -43,5 +56,5 @@ func main() {
 	}
 
 	devices := readInput(file)
-	fmt.Println(devices)
+	fmt.Println("Part1:", part1("you", devices))
 }
