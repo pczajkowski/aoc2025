@@ -44,6 +44,36 @@ func part1(entry string, devices map[string][]string) int {
 	return count
 }
 
+func findPaths(entry string, devices map[string][]string, visited map[string]bool) int {
+	if entry == "out" {
+		if visited["dac"] && visited["fft"] {
+			return 1
+		}
+
+		return 0
+	}
+
+	visited[entry] = true
+	var count int
+	for _, device := range devices[entry] {
+		visited[device] = true
+		count += findPaths(device, devices, visited)
+	}
+
+	return count
+}
+
+func part2(entry string, devices map[string][]string) int {
+	var count int
+	for _, device := range devices[entry] {
+		visited := make(map[string]bool)
+		visited[device] = true
+		count += findPaths(device, devices, visited)
+	}
+
+	return count
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("You need to specify a file!")
@@ -57,4 +87,5 @@ func main() {
 
 	devices := readInput(file)
 	fmt.Println("Part1:", part1("you", devices))
+	fmt.Println("Part2:", part2("svr", devices))
 }
